@@ -1,35 +1,39 @@
 package sda.db.hibernate;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import sda.db.hibernate.entity.Album;
 import sda.db.hibernate.entity.Author;
 import sda.db.hibernate.entity.Song;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import java.time.Instant;
 import java.util.List;
 
-public class Project {
 
-    public void run() {
+public class Project {
+    public void run(){
         SessionFactory sessionFactory = new Configuration()
                 .configure("hibernate.cfg.xml")
                 .addAnnotatedClass(Album.class)
                 .addAnnotatedClass(Author.class)
                 .addAnnotatedClass(Song.class)
                 .buildSessionFactory();
-
         EntityManager em = sessionFactory.createEntityManager();
+        EntityTransaction t = em. getTransaction();
 
-        EntityTransaction t = em.getTransaction();
+
 
         t.begin();
 
         Author author = new Author();
         author.setName("Super Author");
 
-        Song songD = new Song("song D", author, 123);
+        Song songD = new Song("song D", author, 200, Instant.now());
 
         Album albumA = createAlbumA(author);
         albumA.addSong(songD);
@@ -43,38 +47,40 @@ public class Project {
 
         t.commit();
 
-        List<Song> songs = em.createQuery("FROM Song", Song.class).getResultList();
+        List<Song> songs = em.createQuery("FROM Song s", Song.class).getResultList();
         songs.forEach(System.out::println);
 
-        List<Album> albums = em.createQuery("FROM Album", Album.class).getResultList();
-        albums.forEach(System.out::println);
+        List<Album> albumsA = em.createQuery("FROM Album", Album.class).getResultList();
+        albumsA.forEach(System.out::println);
 
-//        try (Session session = sessionFactory.openSession()) {
-//            Query q = session.createQuery("FROM Song s", Song.class);
-//        }
+
+
+
+/*        try (Session session = sessionFactory.openSession()){
+            Query q = session.createQuery("SELECT s FROM Song s", Song.class);
+        }*/
     }
 
-    private Album createAlbumA(Author author) {
-        Song songA = new Song("song A", author, 123);
-
-        Song songB = new Song("song B", author, 123);
+    private Album createAlbumA (Author author){
+        Song song1 = new Song("Song A", author, 3, Instant.now());
+        Song song2 = new Song("Song B", author, 6, Instant.now());
 
         Album album = new Album();
-        album.setName("Old Album");
+        album.setName("old Album");
         album.setAuthor(author);
-        album.addSong(songA);
-        album.addSong(songB);
+        album.addSong(song1);
+        album.addSong(song2);
 
         return album;
     }
 
-    private Album createAlbumB(Author author) {
-        Song songA = new Song("song C", author, 123);
+    private Album createAlbumB (Author author){
+        Song song1 = new Song("Song C", author, 2, Instant.now());
 
         Album album = new Album();
         album.setName("New Album");
         album.setAuthor(author);
-        album.addSong(songA);
+        album.addSong(song1);
 
         return album;
     }

@@ -4,19 +4,18 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "albums")
 public class Album {
-
     @Id
     @GeneratedValue
     private UUID id;
-
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany (cascade = CascadeType.ALL)
     private List<Song> songs = new ArrayList<>();
 
     @OneToOne
@@ -46,8 +45,8 @@ public class Album {
         this.songs = songs;
     }
 
-    public void addSong(Song song) {
-        song.getAlbums().add(this);
+    public void addSong(Song song){
+        song.getAlbum().add(this);
         songs.add(song);
     }
 

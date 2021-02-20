@@ -9,11 +9,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "authors")
 public class Author {
-
     @Id
     @GeneratedValue
     private UUID id;
-
     private String name;
 
     public UUID getId() {
@@ -35,7 +33,8 @@ public class Author {
     @Override
     public String toString() {
         return "Author{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 '}';
     }
 }
